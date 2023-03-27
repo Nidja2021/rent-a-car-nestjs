@@ -14,9 +14,10 @@ import {
 import { CarsService } from './cars.service';
 import { Car } from "@prisma/client";
 import { CarDto } from "./dto/car.dto";
-import { AuthGuard } from "@nestjs/passport";
-import { UserGuard } from "../auth/auth.guards";
+import { UserGuard } from "../auth/guards/auth.guards";
 import { Request } from "express";
+import { RolesGuard } from "../auth/guards/roles.guard";
+import { Roles } from "../auth/decorator/roles.decorator";
 
 @Controller('cars')
 export class CarsController {
@@ -29,7 +30,8 @@ export class CarsController {
   }
 
   @HttpCode(HttpStatus.CREATED)
-  @UseGuards(UserGuard)
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN')
   @Post()
   createCar(@Body() carDto: CarDto, @Req() req: Request) {
     return this.carsService.create(carDto, req)
